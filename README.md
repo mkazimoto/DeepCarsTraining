@@ -44,9 +44,9 @@ MLP de 3 camadas com ativação ReLU:
 ## Como Executar
 
 ```bash
-git clone https://github.com/<seu-usuario>/DeepCarsTraining.git
+git clone https://github.com/mkazimoto/DeepCarsTraining.git
 cd DeepCarsTraining
-dotnet run --project DeepCarsTraining
+dotnet run 
 ```
 
 Pressione qualquer tecla no terminal para iniciar o treinamento.
