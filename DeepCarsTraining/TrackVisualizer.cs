@@ -46,7 +46,11 @@ public sealed class TrackVisualizer : Form
   private int _populationSize;
   private bool _trainingDone;
   private readonly object _stateLock = new();
-
+  // ── Botão de curvas ─────────────────────────────────────────────
+  private static readonly double[] CurvePresets = [0.0, 20.0, 40.0, 60.0, 80.0];
+  private static readonly string[] CurveLabels  = ["Reta", "Leve", "Média", "Forte", "Extrema"];
+  private int _curveIndex = 2; // padrão: 40 px (Média)
+  private Button? _btnCurves;
   // ── Recursos de desenho (pré-criados para evitar alocações no OnPaint) ───
   private readonly Font _fontTitle = new("Consolas", 11, FontStyle.Bold);
   private readonly Font _fontInfo = new("Consolas", 9);
@@ -84,10 +88,33 @@ public sealed class TrackVisualizer : Form
     var timer = new System.Windows.Forms.Timer { Interval = 16 }; // ~60 FPS
     timer.Tick += (_, _) => { if (!IsDisposed) Invalidate(); };
     timer.Start();
+
+    // Botão para alterar as curvas da pista
+    _btnCurves = new Button
+    {
+      Text      = $"Curvas: {CurveLabels[_curveIndex]} ({CurvePresets[_curveIndex]:F0}px)",
+      Size      = new Size(180, 28),
+      Location  = new Point(ClientW - 190, (HudHeight - 28) / 2),
+      FlatStyle = FlatStyle.Flat,
+      BackColor = Color.FromArgb(55, 55, 80),
+      ForeColor = Color.White,
+      Font      = new Font("Consolas", 8),
+      Cursor    = Cursors.Hand,
+    };
+    _btnCurves.FlatAppearance.BorderColor = Color.FromArgb(100, 130, 200);
+    _btnCurves.Click += OnBtnCurvesClick;
+    Controls.Add(_btnCurves);
   }
 
   // ── API pública ──────────────────────────────────────────────────────────
-
+  private void OnBtnCurvesClick(object? sender, EventArgs e)
+  {
+    _curveIndex = (_curveIndex + 1) % CurvePresets.Length;
+    double amp  = CurvePresets[_curveIndex];
+    Track.Rebuild(amp);
+    if (_btnCurves is not null)
+      _btnCurves.Text = $"Curvas: {CurveLabels[_curveIndex]} ({amp:F0}px)";
+  }
   /// <summary>
   /// Atualiza o estado exibido. Thread-safe — pode ser chamado da thread de simulação.
   /// </summary>

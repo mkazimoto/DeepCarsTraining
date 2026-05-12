@@ -2,7 +2,7 @@
 
 // ── Parâmetros configuráveis ─────────────────────────────────────────────────
 int  populationSize   = 1000;  // indivíduos por geração
-int  generations      = 3;    // número de gerações
+int  generations      = 10;    // número de gerações
 int  stepsPerEval     = 500;   // ticks de simulação por indivíduo (Fase 2)
 int  eliteCount       = 10;    // quantos sobrevivem sem mutação (Fase 3)
 double mutationRate   = 0.10;  // 10% de chance de mutar cada peso (Fase 3)
@@ -13,10 +13,6 @@ int? seed = null; // ex: int? seed = 42;
 
 // Visualização gráfica em tempo real — desative para treinamento máximo
 bool showVisualization = true;
-
-// ── Aguardar tecla para iniciar ──────────────────────────────────────────────
-Console.WriteLine("Pressione qualquer tecla para iniciar o treinamento...");
-Console.ReadKey(intercept: true);
 
 // ── Execução ─────────────────────────────────────────────────────────────────
 TrackVisualizer? visualizer = showVisualization

@@ -24,33 +24,50 @@ public static class Track
 
     private const int SemiPts = 48;        // amostras por semicírculo (mais = mais suave)
     private const int ChicanePts = 24;     // pontos amostrados em cada chicane
-    private const double ChicaneA = 40.0;  // amplitude lateral da chicane (px)
+    private static double _chicaneA = 40.0; // amplitude lateral da chicane (px)
+
+    /// <summary>Amplitude atual das chicanes (px).</summary>
+    public static double ChicaneAmplitude => _chicaneA;
 
     // ── Posição e ângulo de largada ──────────────────────────────────────────
     /// <summary>Vale da primeira chicane na reta inferior (dy/dx = 0 aqui).</summary>
     public const double StartX     = 325.0;
-    /// <summary>Centro da faixa no vale da chicane inferior: (460 + 380) / 2 = 420.</summary>
-    public const double StartY     = 420.0;
+    /// <summary>Centro da faixa no vale da chicane inferior: (TrackCy+OuterR-ChicaneA + TrackCy+InnerR-ChicaneA) / 2 = 460 - ChicaneA.</summary>
+    public static double StartY     => 460.0 - _chicaneA;
     /// <summary>Aponta para a direita — sentido anti-horário visto no ecrã.</summary>
     public const double StartAngle = 0.0;
 
     // ── Polígonos das paredes (double, para Car.cs / LIDAR) ───────────────────
     /// <summary>Parede externa da pista como sequência de vértices.</summary>
-    public static readonly (double X, double Y)[] OuterWall = BuildStadium(OuterR);
+    public static (double X, double Y)[] OuterWall = BuildStadium(OuterR);
 
     /// <summary>Parede interna (ilha) como sequência de vértices.</summary>
-    public static readonly (double X, double Y)[] InnerWall = BuildStadium(InnerR);
+    public static (double X, double Y)[] InnerWall = BuildStadium(InnerR);
 
     // ── Versão PointF para o renderizador GDI+ ───────────────────────────────
     /// <summary>Parede externa em PointF (para GDI+).</summary>
-    public static readonly PointF[] OuterWallF = ToPointF(OuterWall);
+    public static PointF[] OuterWallF = ToPointF(OuterWall);
 
     /// <summary>Parede interna em PointF (para GDI+).</summary>
-    public static readonly PointF[] InnerWallF = ToPointF(InnerWall);
+    public static PointF[] InnerWallF = ToPointF(InnerWall);
 
     // ═════════════════════════════════════════════════════════════════════════
     // API PÚBLICA
     // ═════════════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Reconstrói os polígonos da pista com uma nova amplitude de chicane.
+    /// Pode ser chamado a qualquer momento; afeta a simulação imediatamente.
+    /// </summary>
+    /// <param name="chicaneAmplitude">Amplitude lateral da chicane em pixels (0 = reta, 80 = curva máxima).</param>
+    public static void Rebuild(double chicaneAmplitude)
+    {
+        _chicaneA  = Math.Clamp(chicaneAmplitude, 0.0, 95.0);
+        OuterWall  = BuildStadium(OuterR);
+        InnerWall  = BuildStadium(InnerR);
+        OuterWallF = ToPointF(OuterWall);
+        InnerWallF = ToPointF(InnerWall);
+    }
 
     /// <summary>
     /// Retorna <see langword="true"/> se o ponto (x, y) estiver dentro da área
@@ -108,7 +125,7 @@ public static class Track
         {
             double t = (double)i / ChicanePts;
             double x = LeftCx + t * (RightCx - LeftCx);
-            double y = (TrackCy + radius) - ChicaneA * Math.Sin(2.0 * Math.PI * t);
+            double y = (TrackCy + radius) - _chicaneA * Math.Sin(2.0 * Math.PI * t);
             pts.Add((x, y));
         }
 
@@ -125,7 +142,7 @@ public static class Track
         {
             double t = (double)i / ChicanePts;
             double x = RightCx - t * (RightCx - LeftCx);
-            double y = (TrackCy - radius) + ChicaneA * Math.Sin(2.0 * Math.PI * t);
+            double y = (TrackCy - radius) + _chicaneA * Math.Sin(2.0 * Math.PI * t);
             pts.Add((x, y));
         }
 
