@@ -321,6 +321,14 @@ public sealed class TrackVisualizer : Form
 
   private void InitializeComponent()
   {
+    SuspendLayout();
+    // 
+    // TrackVisualizer
+    // 
+    ClientSize = new Size(284, 261);
+    Name = "TrackVisualizer";
+    StartPosition = FormStartPosition.CenterScreen;
+    ResumeLayout(false);
 
   }
 

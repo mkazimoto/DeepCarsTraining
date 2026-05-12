@@ -23,12 +23,14 @@ public static class Track
     private const double InnerR  = 120.0;  // raio interno (ilha central)
 
     private const int SemiPts = 48;        // amostras por semicírculo (mais = mais suave)
+    private const int ChicanePts = 24;     // pontos amostrados em cada chicane
+    private const double ChicaneA = 40.0;  // amplitude lateral da chicane (px)
 
     // ── Posição e ângulo de largada ──────────────────────────────────────────
-    /// <summary>Centro geométrico da reta inferior da pista.</summary>
-    public const double StartX     = 400.0;
-    /// <summary>Centro da faixa na reta inferior (OuterR + InnerR) / 2 = 460.</summary>
-    public const double StartY     = 460.0;
+    /// <summary>Vale da primeira chicane na reta inferior (dy/dx = 0 aqui).</summary>
+    public const double StartX     = 325.0;
+    /// <summary>Centro da faixa no vale da chicane inferior: (460 + 380) / 2 = 420.</summary>
+    public const double StartY     = 420.0;
     /// <summary>Aponta para a direita — sentido anti-horário visto no ecrã.</summary>
     public const double StartAngle = 0.0;
 
@@ -89,9 +91,9 @@ public static class Track
     /// </summary>
     private static (double X, double Y)[] BuildStadium(double radius)
     {
-        var pts = new List<(double X, double Y)>(SemiPts * 2 + 4);
+        var pts = new List<(double X, double Y)>(SemiPts * 2 + ChicanePts * 2 + 4);
 
-        // Semicírculo esquerdo: 270° → 90° (lado esquerdo, em sentido horário na tela)
+        // Semicírculo esquerdo: 270° → 90° (termina no canto inferior-esquerdo)
         for (int i = 0; i <= SemiPts; i++)
         {
             double a = (270.0 - 180.0 * i / SemiPts) * Math.PI / 180.0;
@@ -99,12 +101,32 @@ public static class Track
                      TrackCy + radius * Math.Sin(a)));
         }
 
-        // Semicírculo direito: 90° → −90° (lado direito, em sentido horário na tela)
+        // Reta inferior com chicane em S (de LeftCx → RightCx)
+        // O mesmo offset ±ChicaneA é aplicado à parede externa e interna,
+        // preservando a largura da pista (OuterR − InnerR = 80 px).
+        for (int i = 1; i < ChicanePts; i++)
+        {
+            double t = (double)i / ChicanePts;
+            double x = LeftCx + t * (RightCx - LeftCx);
+            double y = (TrackCy + radius) - ChicaneA * Math.Sin(2.0 * Math.PI * t);
+            pts.Add((x, y));
+        }
+
+        // Semicírculo direito: 90° → −90° (termina no canto superior-direito)
         for (int i = 0; i <= SemiPts; i++)
         {
             double a = (90.0 - 180.0 * i / SemiPts) * Math.PI / 180.0;
             pts.Add((RightCx + radius * Math.Cos(a),
                      TrackCy + radius * Math.Sin(a)));
+        }
+
+        // Reta superior com chicane em S (de RightCx → LeftCx)
+        for (int i = 1; i < ChicanePts; i++)
+        {
+            double t = (double)i / ChicanePts;
+            double x = RightCx - t * (RightCx - LeftCx);
+            double y = (TrackCy - radius) + ChicaneA * Math.Sin(2.0 * Math.PI * t);
+            pts.Add((x, y));
         }
 
         return pts.ToArray();
