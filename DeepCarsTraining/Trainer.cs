@@ -25,6 +25,14 @@ public sealed class Trainer
     private readonly double _mutationRate;     // probabilidade de mutar cada peso
     private readonly double _mutationStrength; // magnitude da perturbação
 
+    // ── Curriculum learning ──────────────────────────────────────────────────
+    /// <summary>Amplitude de chicane inicial (geração 1).</summary>
+    private readonly double _curriculumStart;
+    /// <summary>Amplitude de chicane final (última geração).</summary>
+    private readonly double _curriculumEnd;
+    /// <summary>Amplitude aplicada na geração atual.</summary>
+    private double _currentChicane;
+
     // ── Estado interno ───────────────────────────────────────────────────────
     private List<NeuralNetwork>   _population  = [];
     private int                   _generation  = 0;
@@ -35,6 +43,9 @@ public sealed class Trainer
     public double BestFitnessEver     { get; private set; }
     public NeuralNetwork? BestNetwork { get; private set; }
 
+    /// <summary>Pasta onde as redes neurais são salvas.</summary>
+    public static string NetworkFolder => Path.Combine(AppContext.BaseDirectory, "RedeNeural");
+
     // ── Construtor ───────────────────────────────────────────────────────────
     public Trainer(
         int    populationSize   = 1000,
@@ -43,7 +54,9 @@ public sealed class Trainer
         double mutationRate     = 0.10,
         double mutationStrength = 0.30,
         int?   seed             = null,
-        TrackVisualizer? visualizer = null)
+        TrackVisualizer? visualizer = null,
+        double curriculumStart  = -1.0,  // -1 = usar amplitude atual da pista
+        double curriculumEnd    = -1.0)  // -1 = igual ao start (sem progressão)
     {
         _populationSize   = populationSize;
         _stepsPerEval     = stepsPerEval;
@@ -52,6 +65,12 @@ public sealed class Trainer
         _mutationStrength = mutationStrength;
         _rng              = seed.HasValue ? new Random(seed.Value) : new Random();
         _visualizer       = visualizer;
+
+        // Se não especificado, usa a amplitude atual da pista
+        double currentAmp   = Track.ChicaneAmplitude;
+        _curriculumStart    = curriculumStart  < 0 ? currentAmp : curriculumStart;
+        _curriculumEnd      = curriculumEnd    < 0 ? _curriculumStart : curriculumEnd;
+        _currentChicane     = _curriculumStart;
     }
 
     // ════════════════════════════════════════════════════════════════════════
@@ -76,6 +95,11 @@ public sealed class Trainer
         {
             _generation = gen;
             var genSw = Stopwatch.StartNew();
+
+            // Curriculum: interpola a amplitude da chicane linearmente entre gerações
+            double t = generations > 1 ? (gen - 1.0) / (generations - 1.0) : 1.0;
+            _currentChicane = _curriculumStart + t * (_curriculumEnd - _curriculumStart);
+            Track.Rebuild(_currentChicane);
 
             Phase2_Evaluate();
             Phase3_Evolve();
@@ -311,10 +335,12 @@ public sealed class Trainer
     {
         if (BestNetwork is null) return null;
 
+        Directory.CreateDirectory(NetworkFolder);
         string fileName = $"best_network_gen{BestNetwork.Generation}_fit{BestFitnessEver:F0}.json";
-        string fullPath = Path.GetFullPath(fileName);
+        string fullPath = Path.Combine(NetworkFolder, fileName);
 
         BestNetwork.SaveToJson(fullPath);
+        _visualizer?.RefreshNetworkList();
 
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.Cyan;
@@ -335,7 +361,9 @@ public sealed class Trainer
     /// </summary>
     public static void ReplaySaved(string jsonPath, TrackVisualizer visualizer)
     {
-        var nn = NeuralNetwork.LoadFromJson(jsonPath);
+        // Verifica se o usuário já selecionou outra rede antes do replay iniciar
+        string? pending = visualizer.TakeReplayRequest();
+        var nn = NeuralNetwork.LoadFromJson(pending ?? jsonPath);
 
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.Cyan;
@@ -350,10 +378,30 @@ public sealed class Trainer
 
         while (!visualizer.IsDisposed)
         {
-            var car = new Car(nn, Track.StartX, Track.StartY, Track.StartAngle);
+            var car     = new Car(nn, Track.StartX, Track.StartY, Track.StartAngle);
+            bool switched = false;
 
             while (car.IsAlive && !visualizer.IsDisposed)
             {
+                // Verifica solicitação de troca de rede pelo ComboBox
+                string? requested = visualizer.TakeReplayRequest();
+                if (requested != null)
+                {
+                    try
+                    {
+                        nn = NeuralNetwork.LoadFromJson(requested);
+                        Console.WriteLine($"\n  [Replay] Rede alterada: {Path.GetFileNameWithoutExtension(requested)}");
+                        Console.WriteLine($"  Geração: {nn.Generation}  |  Fitness: {nn.Fitness:F2}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"\n  [Replay] Erro ao carregar rede: {ex.Message}");
+                    }
+                    lapCount  = 0;
+                    switched  = true;
+                    break;
+                }
+
                 for (int i = 0; i < FrameInterval && car.IsAlive; i++)
                     car.Step();
 
@@ -372,8 +420,11 @@ public sealed class Trainer
                 Thread.Sleep(FrameMs);
             }
 
-            lapCount++;
-            Console.WriteLine($"  [Replay] Tentativa {lapCount} — distância: {car.DistanceTraveled:F1}");
+            if (!switched)
+            {
+                lapCount++;
+                Console.WriteLine($"  [Replay] Tentativa {lapCount} — distância: {car.DistanceTraveled:F1}");
+            }
         }
     }
 
@@ -392,7 +443,8 @@ public sealed class Trainer
     {
         Console.ForegroundColor = ConsoleColor.DarkCyan;
         Console.WriteLine($"\n  >> Geração {_generation,3} concluída em {elapsedMs} ms  |  " +
-                          $"Melhor fitness histórico: {BestFitnessEver:F2}");
+                          $"Melhor fitness histórico: {BestFitnessEver:F2}  |  " +
+                          $"Chicane: {_currentChicane:F0}px");
         Console.WriteLine("  ─────────────────────────────────────────────────────");
         Console.ResetColor();
     }

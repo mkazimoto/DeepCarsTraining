@@ -51,6 +51,10 @@ public sealed class TrackVisualizer : Form
   private static readonly string[] CurveLabels  = ["Reta", "Leve", "Média", "Forte", "Extrema"];
   private int _curveIndex = 2; // padrão: 40 px (Média)
   private Button? _btnCurves;
+  // ── ComboBox de seleção de rede neural ────────────────────────────────
+  private ComboBox? _cmbNetworks;
+  private string?   _requestedReplayPath;
+  private readonly object _replayLock = new();
   // ── Recursos de desenho (pré-criados para evitar alocações no OnPaint) ───
   private readonly Font _fontTitle = new("Consolas", 11, FontStyle.Bold);
   private readonly Font _fontInfo = new("Consolas", 9);
@@ -104,6 +108,22 @@ public sealed class TrackVisualizer : Form
     _btnCurves.FlatAppearance.BorderColor = Color.FromArgb(100, 130, 200);
     _btnCurves.Click += OnBtnCurvesClick;
     Controls.Add(_btnCurves);
+
+    // ── ComboBox de redes neurais ─────────────────────────────────────────
+    _cmbNetworks = new ComboBox
+    {
+      Size          = new Size(210, 28),
+      Location      = new Point(ClientW - 410, (HudHeight - 28) / 2),
+      DropDownStyle = ComboBoxStyle.DropDownList,
+      BackColor     = Color.FromArgb(40, 40, 60),
+      ForeColor     = Color.White,
+      Font          = new Font("Consolas", 8),
+      Cursor        = Cursors.Hand,
+    };
+    _cmbNetworks.DropDown             += (_, _) => RefreshNetworkList();
+    _cmbNetworks.SelectedIndexChanged += OnCmbNetworkSelected;
+    Controls.Add(_cmbNetworks);
+    RefreshNetworkList();
   }
 
   // ── API pública ──────────────────────────────────────────────────────────
@@ -146,6 +166,71 @@ public sealed class TrackVisualizer : Form
   {
     while (!IsDisposed)
       Thread.Sleep(100);
+  }
+
+  /// <summary>
+  /// Retorna (e limpa) o caminho de rede solicitado pelo ComboBox. Thread-safe.
+  /// Retorna null se não houver solicitação pendente.
+  /// </summary>
+  public string? TakeReplayRequest()
+  {
+    lock (_replayLock)
+    {
+      var path = _requestedReplayPath;
+      _requestedReplayPath = null;
+      return path;
+    }
+  }
+
+  /// <summary>
+  /// Atualiza a lista do ComboBox com os arquivos JSON da pasta RedeNeural.
+  /// Thread-safe — pode ser chamado da thread de treinamento.
+  /// </summary>
+  public void RefreshNetworkList()
+  {
+    if (_cmbNetworks is null || IsDisposed) return;
+
+    string folder = Path.Combine(AppContext.BaseDirectory, "RedeNeural");
+    if (!Directory.Exists(folder)) return;
+
+    var files = Directory.GetFiles(folder, "*.json")
+                         .OrderByDescending(f => f)
+                         .ToArray();
+
+    void UpdateUI()
+    {
+      var prev = _cmbNetworks.SelectedItem as NetworkItem;
+      _cmbNetworks.SelectedIndexChanged -= OnCmbNetworkSelected;
+      _cmbNetworks.Items.Clear();
+      foreach (var f in files)
+        _cmbNetworks.Items.Add(new NetworkItem(f));
+
+      if (prev != null)
+      {
+        var match = _cmbNetworks.Items.Cast<NetworkItem>()
+                                .FirstOrDefault(n => n.Path == prev.Path);
+        if (match != null) _cmbNetworks.SelectedItem = match;
+        else if (_cmbNetworks.Items.Count > 0) _cmbNetworks.SelectedIndex = 0;
+      }
+      else if (_cmbNetworks.Items.Count > 0)
+        _cmbNetworks.SelectedIndex = 0;
+
+      _cmbNetworks.SelectedIndexChanged += OnCmbNetworkSelected;
+    }
+
+    if (_cmbNetworks.InvokeRequired)
+      _cmbNetworks.Invoke(UpdateUI);
+    else
+      UpdateUI();
+  }
+
+  private void OnCmbNetworkSelected(object? sender, EventArgs e)
+  {
+    if (_cmbNetworks?.SelectedItem is NetworkItem item)
+    {
+      lock (_replayLock)
+        _requestedReplayPath = item.Path;
+    }
   }
 
   /// <summary>
@@ -359,6 +444,13 @@ public sealed class TrackVisualizer : Form
     StartPosition = FormStartPosition.CenterScreen;
     ResumeLayout(false);
 
+  }
+
+  // ── Classe auxiliar para itens do ComboBox ────────────────────────────
+  private sealed class NetworkItem(string path)
+  {
+    public string Path { get; } = path;
+    public override string ToString() => System.IO.Path.GetFileNameWithoutExtension(Path);
   }
 
   protected override void Dispose(bool disposing)
