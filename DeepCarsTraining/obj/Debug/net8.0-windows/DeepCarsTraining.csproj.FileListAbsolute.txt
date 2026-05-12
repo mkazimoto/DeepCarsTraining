@@ -1,0 +1,16 @@
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\bin\Debug\net8.0-windows\DeepCarsTraining.exe
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\bin\Debug\net8.0-windows\DeepCarsTraining.deps.json
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\bin\Debug\net8.0-windows\DeepCarsTraining.runtimeconfig.json
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\bin\Debug\net8.0-windows\DeepCarsTraining.dll
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\bin\Debug\net8.0-windows\DeepCarsTraining.pdb
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\obj\Debug\net8.0-windows\DeepCarsTraining.GeneratedMSBuildEditorConfig.editorconfig
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\obj\Debug\net8.0-windows\DeepCarsTraining.AssemblyInfoInputs.cache
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\obj\Debug\net8.0-windows\DeepCarsTraining.AssemblyInfo.cs
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\obj\Debug\net8.0-windows\DeepCarsTraining.csproj.CoreCompileInputs.cache
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\obj\Debug\net8.0-windows\DeepCarsTraining.dll
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\obj\Debug\net8.0-windows\refint\DeepCarsTraining.dll
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\obj\Debug\net8.0-windows\DeepCarsTraining.pdb
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\obj\Debug\net8.0-windows\DeepCarsTraining.genruntimeconfig.cache
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\obj\Debug\net8.0-windows\ref\DeepCarsTraining.dll
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\obj\Debug\net8.0-windows\DeepCarsTraining.TrackVisualizer.resources
+C:\git\RedeNeuralLIDAR\DeepCarsTraining\obj\Debug\net8.0-windows\DeepCarsTraining.csproj.GenerateResource.cache
