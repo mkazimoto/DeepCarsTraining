@@ -135,6 +135,7 @@ public sealed class TrackVisualizer : Form
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       instance = new TrackVisualizer();
+      instance.StartPosition = FormStartPosition.CenterScreen;
       instance.HandleCreated += (_, _) => ready.Set();
       Application.Run(instance);
     });
