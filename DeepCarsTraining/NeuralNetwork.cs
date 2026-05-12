@@ -5,7 +5,7 @@ namespace DeepCarsTraining;
 /// <summary>
 /// Rede Neural Artificial — Perceptron Multilayer (MLP) de 3 camadas
 /// Arquitetura fiel ao projeto DeepCars (https://github.com/JVictorDias/DeepCars/):
-///   Entrada : 18 sensores + 1 viés = 19 neurônios
+///   Entrada : 18 sensores LIDAR + 1 velocidade + 1 viés = 20 neurônios
 ///   Oculta  :  6 neurônios + 1 viés =  7 neurônios
 ///   Saída   :  4 neurônios (Acelerar, Ré, Virar Esquerda, Virar Direita)
 /// Ativação : ReLU em todas as camadas
@@ -13,7 +13,7 @@ namespace DeepCarsTraining;
 public sealed class NeuralNetwork
 {
     // ── Dimensões fixas da arquitetura ──────────────────────────────────────
-    public const int InputNeurons  = 18;   // sensores LIDAR
+    public const int InputNeurons  = 19;   // 18 sensores LIDAR + 1 velocidade normalizada
     public const int HiddenNeurons = 6;
     public const int OutputNeurons = 4;    // Acelerar | Ré | Esquerda | Direita
 

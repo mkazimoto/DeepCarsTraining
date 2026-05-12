@@ -40,11 +40,11 @@ public sealed class Car
     public NeuralNetwork Brain { get; }
 
     // ── Sensores ─────────────────────────────────────────────────────────────
-    /// <summary>18 leituras dos sensores LIDAR (valores normalizados em [0,1]).</summary>
+    /// <summary>19 entradas: [0-17] leituras LIDAR normalizadas, [18] velocidade normalizada.</summary>
     public double[] Sensors { get; } = new double[NeuralNetwork.InputNeurons];
 
-    // ── Ângulos dos sensores (relativo à frente do carro) ────────────────────
-    // 18 sensores espaçados em 180° à frente do carro (-90° a +90°, passo de 10°)
+    // ── Ângulos dos sensores (relativo à frente do carro) ────────────────────────
+    // 18 sensores LIDAR espaçados em 180° à frente do carro (-90° a +90°, passo de 10°)
     private static readonly double[] SensorAngles = GenerateSensorAngles();
 
     // ── Construtor ───────────────────────────────────────────────────────────
@@ -116,12 +116,13 @@ public sealed class Car
     /// Simula 18 raycasts a partir da posição do carro.
     /// Cada sensor retorna a distância normalizada à borda da pista mais próxima.
     /// Valor 1.0 = caminho livre; valor próximo de 0.0 = parede muito perto.
+    /// O sensor extra (index 18) é a velocidade normalizada em [0, 1].
     /// </summary>
     private void UpdateSensors()
     {
         const double MaxSensorRange = 200.0;
 
-        for (int s = 0; s < NeuralNetwork.InputNeurons; s++)
+        for (int s = 0; s < 18; s++)
         {
             double sensorAngleRad = (Angle + SensorAngles[s]) * Math.PI / 180.0;
             double dirX = Math.Cos(sensorAngleRad);
@@ -130,16 +131,20 @@ public sealed class Car
             double distance = Track.Raycast(X, Y, dirX, dirY, MaxSensorRange);
             Sensors[s] = Math.Clamp(distance / MaxSensorRange, 0.0, 1.0);
         }
+
+        // Úcltima entrada: velocidade normalizada em [0, 1]
+        Sensors[18] = Math.Clamp(Math.Abs(Speed) / MaxSpeed, 0.0, 1.0);
     }
 
     // ── Utilidades ───────────────────────────────────────────────────────────
     private static double[] GenerateSensorAngles()
     {
-        // 18 sensores de -85° a +85° em passos de ~10°
-        var angles = new double[NeuralNetwork.InputNeurons];
+        // 18 sensores LIDAR de -85° a +85° em passos de ~10°
+        const int LidarCount = 18;
+        var angles = new double[LidarCount];
         double start = -85.0;
-        double step  = 170.0 / (NeuralNetwork.InputNeurons - 1);
-        for (int i = 0; i < NeuralNetwork.InputNeurons; i++)
+        double step  = 170.0 / (LidarCount - 1);
+        for (int i = 0; i < LidarCount; i++)
             angles[i] = start + step * i;
         return angles;
     }
