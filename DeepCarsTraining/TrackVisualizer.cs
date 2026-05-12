@@ -310,7 +310,7 @@ public sealed class TrackVisualizer : Form
     {
       if (!s.IsBest || s.Sensors is null) continue;
 
-      for (int i = 0; i < s.Sensors.Length && i < SensorAngles.Length; i++)
+      for (int i = 0; i < SensorAngles.Length; i++) // SensorAngles.Length = 18 (LIDAR apenas)
       {
         double sRad = (s.Angle + SensorAngles[i]) * Math.PI / 180.0;
         double dist = s.Sensors[i] * SensorMaxRange;
@@ -339,10 +339,11 @@ public sealed class TrackVisualizer : Form
 
   private static double[] BuildSensorAngles()
   {
-    // Deve coincidir com Car.GenerateSensorAngles()
-    var a = new double[NeuralNetwork.InputNeurons];
-    double step = 170.0 / (NeuralNetwork.InputNeurons - 1);
-    for (int i = 0; i < NeuralNetwork.InputNeurons; i++)
+    // Apenas os 18 sensores LIDAR — o último input (velocidade) não é direcional
+    const int LidarCount = 18;
+    var a = new double[LidarCount];
+    double step = 170.0 / (LidarCount - 1);
+    for (int i = 0; i < LidarCount; i++)
       a[i] = -85.0 + step * i;
     return a;
   }
