@@ -49,7 +49,7 @@ public sealed class TrackVisualizer : Form
   // ── Botão de curvas ─────────────────────────────────────────────
   private static readonly double[] CurvePresets = [0.0, 20.0, 40.0, 60.0, 80.0];
   private static readonly string[] CurveLabels  = ["Reta", "Leve", "Média", "Forte", "Extrema"];
-  private int _curveIndex = 2; // padrão: 40 px (Média)
+  private int _curveIndex = 0; // padrão: 0 px 
   private Button? _btnCurves;
   // ── ComboBox de seleção de rede neural ────────────────────────────────
   private ComboBox? _cmbNetworks;
@@ -82,7 +82,7 @@ public sealed class TrackVisualizer : Form
   // ── Construtor privado ───────────────────────────────────────────────────
   private TrackVisualizer()
   {
-    Text = "Deep Cars — Treinamento Evolutivo";
+    Text = "Deep Cars — Treinamento Evolutivo da Rede Neural";
     ClientSize = new Size(ClientW, ClientH);
     DoubleBuffered = true;
     FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -112,8 +112,8 @@ public sealed class TrackVisualizer : Form
     // ── ComboBox de redes neurais ─────────────────────────────────────────
     _cmbNetworks = new ComboBox
     {
-      Size          = new Size(210, 28),
-      Location      = new Point(ClientW - 410, (HudHeight - 28) / 2),
+      Size          = _btnCurves.Size,
+      Location      = new Point(ClientW - 190, _btnCurves.Location.Y + _btnCurves.Size.Height + 2),
       DropDownStyle = ComboBoxStyle.DropDownList,
       BackColor     = Color.FromArgb(40, 40, 60),
       ForeColor     = Color.White,
@@ -304,12 +304,12 @@ public sealed class TrackVisualizer : Form
   private void DrawHUD(Graphics g, int gen, double best, int alive, int total, int pop)
   {
     g.FillRectangle(_brushHudBack, 0, 0, ClientW, HudHeight);
-    g.DrawString("DEEP CARS — Treinamento Evolutivo", _fontTitle, _brushTitle, 10, 7);
+    g.DrawString("DEEP CARS — Treinamento Evolutivo da Rede Neural", _fontTitle, _brushTitle, 10, 7);
     g.DrawString(
-        $"Geração: {gen,3}   Melhor Fitness: {best,10:F1}   Vivos: {alive,4}/{total,-4}   Pop: {pop}",
+        $"Geração: {gen,3}   Melhor Fitness: {best,10:F1}   Sobreviventes: {alive,4}/{total,-4}   População: {pop}",
         _fontInfo, _brushText, 10, 35);
     g.DrawString(
-        "● Melhor carro (ouro)   ● Vivos (verde)   ● Mortos (verm.)   ─ LIDAR (azul)",
+        "● Melhor carro (ouro)   ● Sobreviventes (verde)   ● Mortos (verm.)   ─ LIDAR (azul)",
         _fontInfo, _brushSubText, 10, 53);
   }
 

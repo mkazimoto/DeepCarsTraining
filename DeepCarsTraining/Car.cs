@@ -54,6 +54,7 @@ public sealed class Car
         X     = startX;
         Y     = startY;
         Angle = startAngle;
+        Speed = 0.0;
     }
 
     // ── Passo de simulação ───────────────────────────────────────────────────

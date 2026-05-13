@@ -8,7 +8,7 @@ namespace DeepCarsTraining;
 ///   Entrada : 18 sensores LIDAR + 1 velocidade + 1 viés = 20 neurônios
 ///   Oculta  :  6 neurônios + 1 viés =  7 neurônios
 ///   Saída   :  4 neurônios (Acelerar, Ré, Virar Esquerda, Virar Direita)
-/// Ativação : ReLU em todas as camadas
+/// Ativação : ReLU na camada oculta; linear na camada de saída
 /// </summary>
 public sealed class NeuralNetwork
 {
@@ -86,7 +86,7 @@ public sealed class NeuralNetwork
             double sum = 0.0;
             for (int h = 0; h < HiddenWithBias; h++)
                 sum += hiddenWithBias[h] * WeightsHiddenOutput[h, o];
-            output[o] = ReLU(sum);
+            output[o] = sum; // ativação linear — permite valores negativos para que a comparação sempre resolva
         }
 
         return output;

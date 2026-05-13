@@ -99,9 +99,16 @@ public sealed class Trainer
             // Curriculum: interpola a amplitude da chicane linearmente entre gerações
             double t = generations > 1 ? (gen - 1.0) / (generations - 1.0) : 1.0;
             _currentChicane = _curriculumStart + t * (_curriculumEnd - _curriculumStart);
-            Track.Rebuild(_currentChicane);
 
             Phase2_Evaluate();
+
+            if (PendingReplayPath is not null)
+            {
+                genSw.Stop();
+                Console.WriteLine("\n  [Treinamento interrompido] Rede selecionada via ComboBox.");
+                break;
+            }
+
             Phase3_Evolve();
 
             genSw.Stop();
@@ -115,6 +122,9 @@ public sealed class Trainer
 
     /// <summary>Caminho do arquivo JSON salvo ao final de <see cref="Run"/>. Nulo se nenhuma rede foi salva.</summary>
     public string? SavedNetworkPath { get; private set; }
+
+    /// <summary>Rede selecionada via ComboBox durante o treinamento. Nulo se o treinamento concluiu normalmente.</summary>
+    public string? PendingReplayPath { get; private set; }
 
     // ════════════════════════════════════════════════════════════════════════
     // FASE 1 — INICIALIZAÇÃO
@@ -202,6 +212,14 @@ public sealed class Trainer
 
                 if (step % FrameInterval == 0 && !_visualizer.IsDisposed)
                 {
+                    // Verifica se o usuário selecionou uma rede durante o treinamento
+                    string? requested = _visualizer.TakeReplayRequest();
+                    if (requested is not null)
+                    {
+                        PendingReplayPath = requested;
+                        break;
+                    }
+
                     int bestIdx = FindBestIndex(cars);
                     (var snaps, int aliveCount) = BuildSnapshots(cars, bestIdx);
                     _visualizer.UpdateState(snaps, _generation, BestFitnessEver,
@@ -233,9 +251,9 @@ public sealed class Trainer
         double avgGen  = _population.Average(n => n.Fitness);
         int    alive   = cars.Count(c => c.IsAlive);
 
-        Console.WriteLine($"    Melhor fitness (geração) : {bestGen,10:F2}");
-        Console.WriteLine($"    Fitness médio            : {avgGen,10:F2}");
-        Console.WriteLine($"    Carros vivos ao final    : {alive,10}");
+        Console.WriteLine($"    Melhor fitness (geração)      : {bestGen,10:F2}");
+        Console.WriteLine($"    Fitness médio                 : {avgGen,10:F2}");
+        Console.WriteLine($"    Carros sobreviventes ao final : {alive,10}");
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("    ✔  Fase 2 concluída.");
         Console.ResetColor();
