@@ -377,10 +377,13 @@ public sealed class Trainer
     /// no <paramref name="visualizer"/> até o usuário fechar a janela.
     /// Ao morrer, o carro é reiniciado na posição de largada.
     /// </summary>
-    public static void ReplaySaved(string jsonPath, TrackVisualizer visualizer)
+    /// <summary>Retorna <see langword="true"/> se o usuário pediu para reiniciar o treinamento.</summary>
+    public static bool ReplaySaved(string jsonPath, TrackVisualizer visualizer)
     {
         // Verifica se o usuário já selecionou outra rede antes do replay iniciar
         string? pending = visualizer.TakeReplayRequest();
+        if (pending == "") return true;  // sentinel: reiniciar treinamento
+
         var nn = NeuralNetwork.LoadFromJson(pending ?? jsonPath);
 
         Console.WriteLine();
@@ -405,6 +408,7 @@ public sealed class Trainer
                 string? requested = visualizer.TakeReplayRequest();
                 if (requested != null)
                 {
+                    if (requested == "") return true;  // sentinel: reiniciar treinamento
                     try
                     {
                         nn = NeuralNetwork.LoadFromJson(requested);
@@ -444,6 +448,7 @@ public sealed class Trainer
                 Console.WriteLine($"  [Replay] Tentativa {lapCount} — distância: {car.DistanceTraveled:F1}");
             }
         }
+        return false;
     }
 
     private static void PrintHeader()

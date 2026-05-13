@@ -19,31 +19,40 @@ TrackVisualizer? visualizer = showVisualization
     ? TrackVisualizer.StartOnNewThread()
     : null;
 
-var trainer = new Trainer(
-    populationSize   : populationSize,
-    stepsPerEval     : stepsPerEval,
-    eliteCount       : eliteCount,
-    mutationRate     : mutationRate,
-    mutationStrength : mutationStr,
-    seed             : seed,
-    visualizer       : visualizer
-);
-
-trainer.Run(generations: generations);
-
-// Volta a pista para curvas retas após o treinamento
-Track.Rebuild(0.0);
-
-// ── Replay da melhor rede salva (ou da rede selecionada via ComboBox) ───────────
-string? replayPath = trainer.PendingReplayPath ?? trainer.SavedNetworkPath;
-if (replayPath is not null && visualizer is not null && !visualizer.IsDisposed)
+bool restartTraining;
+do
 {
-    visualizer.SignalTrainingComplete(); // remove overlay após 1 frame — será substituído pelo replay
-    Trainer.ReplaySaved(replayPath, visualizer);
-}
-else
-{
-    // Exibe overlay de conclusão e aguarda o usuário fechar a janela
-    visualizer?.SignalTrainingComplete();
-    visualizer?.WaitForClose();
-}
+    var trainer = new Trainer(
+        populationSize   : populationSize,
+        stepsPerEval     : stepsPerEval,
+        eliteCount       : eliteCount,
+        mutationRate     : mutationRate,
+        mutationStrength : mutationStr,
+        seed             : seed,
+        visualizer       : visualizer
+    );
+
+    trainer.Run(generations: generations);
+
+    // Volta a pista para curvas retas após o treinamento
+    Track.Rebuild(0.0);
+
+    // ── Replay da melhor rede salva (ou da rede selecionada via ComboBox) ───────
+    string? replayPath = trainer.PendingReplayPath ?? trainer.SavedNetworkPath;
+
+    if (replayPath == "")  // usuário selecionou "< Iniciar Treinamento >" durante o treinamento
+    {
+        restartTraining = true;
+    }
+    else if (replayPath is not null && visualizer is not null && !visualizer.IsDisposed)
+    {
+        visualizer.SignalTrainingComplete();
+        restartTraining = Trainer.ReplaySaved(replayPath, visualizer);
+    }
+    else
+    {
+        restartTraining = false;
+        visualizer?.SignalTrainingComplete();
+        visualizer?.WaitForClose();
+    }
+} while (restartTraining && visualizer is not null && !visualizer.IsDisposed);

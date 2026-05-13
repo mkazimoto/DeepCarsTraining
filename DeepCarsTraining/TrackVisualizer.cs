@@ -202,18 +202,19 @@ public sealed class TrackVisualizer : Form
       var prev = _cmbNetworks.SelectedItem as NetworkItem;
       _cmbNetworks.SelectedIndexChanged -= OnCmbNetworkSelected;
       _cmbNetworks.Items.Clear();
+      _cmbNetworks.Items.Add(new NetworkItem(""));  // índice 0: sentinel de reinício
       foreach (var f in files)
         _cmbNetworks.Items.Add(new NetworkItem(f));
 
-      if (prev != null)
+      if (prev != null && !string.IsNullOrEmpty(prev.Path))
       {
         var match = _cmbNetworks.Items.Cast<NetworkItem>()
                                 .FirstOrDefault(n => n.Path == prev.Path);
         if (match != null) _cmbNetworks.SelectedItem = match;
-        else if (_cmbNetworks.Items.Count > 0) _cmbNetworks.SelectedIndex = 0;
+        else if (_cmbNetworks.Items.Count > 1) _cmbNetworks.SelectedIndex = 1;
       }
-      else if (_cmbNetworks.Items.Count > 0)
-        _cmbNetworks.SelectedIndex = 0;
+      else if (_cmbNetworks.Items.Count > 1)
+        _cmbNetworks.SelectedIndex = 1;  // primeiro arquivo real
 
       _cmbNetworks.SelectedIndexChanged += OnCmbNetworkSelected;
     }
@@ -450,7 +451,10 @@ public sealed class TrackVisualizer : Form
   private sealed class NetworkItem(string path)
   {
     public string Path { get; } = path;
-    public override string ToString() => System.IO.Path.GetFileNameWithoutExtension(Path);
+    public override string ToString() =>
+      string.IsNullOrEmpty(Path)
+        ? "< Iniciar Treinamento >"
+        : System.IO.Path.GetFileNameWithoutExtension(Path);
   }
 
   protected override void Dispose(bool disposing)

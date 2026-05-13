@@ -9,10 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="RedeNeural\best_network_gen10_fit5980.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="RedeNeural\best_network_gen40_fit4408.json">
+    <None Update="RedeNeural\best_network_gen2_fit3027.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

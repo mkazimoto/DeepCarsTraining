@@ -17,10 +17,10 @@ public sealed class Car
     public const double TrackHeight = 600.0;
 
     // ── Parâmetros de movimento ─────────────────────────────────────────────
-    private const double Acceleration = 2.0;
-    private const double Deceleration = -1.5;
-    private const double MaxSpeed     = 12.0;
-    private const double TurnSpeed    = 3.5;   // graus por tick
+    private const double Acceleration = 1.0;
+    private const double Deceleration = -0.5;
+    private const double MaxSpeed     = 6.0;
+    private const double TurnSpeed    = 5.0;   // graus por tick
     private const double Friction     = 0.90;  // fator de desaceleração natural
 
     // ── Estado do carro ─────────────────────────────────────────────────────
