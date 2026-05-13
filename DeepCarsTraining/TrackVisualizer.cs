@@ -306,9 +306,6 @@ public sealed class TrackVisualizer : Form
     }
 
     g.ResetTransform();
-
-    if (done)
-      DrawDoneOverlay(g);
   }
 
   private void DrawHUD(Graphics g, int gen, double best, int alive, int total, int pop)
@@ -417,19 +414,6 @@ public sealed class TrackVisualizer : Form
       }
       break; // apenas o melhor carro
     }
-  }
-
-  private void DrawDoneOverlay(Graphics g)
-  {
-    const int w = 440, h = 70;
-    int x = (ClientW - w) / 2;
-    int y = (ClientH - h) / 2;
-
-    g.FillRectangle(_brushDoneBack, x, y, w, h);
-    using var pen = new Pen(Color.FromArgb(80, 220, 130), 2f);
-    g.DrawRectangle(pen, x, y, w, h);
-    g.DrawString("✔  Treinamento concluído!", _fontDone, _brushDoneText,
-                 x + 20, y + 18);
   }
 
   private static double[] BuildSensorAngles()

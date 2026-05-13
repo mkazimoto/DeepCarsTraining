@@ -475,11 +475,6 @@ public sealed class Trainer
     private void PrintFinalSummary(TimeSpan elapsed)
     {
         Console.WriteLine();
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("╔═══════════════════════════════════════════════════════╗");
-        Console.WriteLine("║                 TREINAMENTO CONCLUÍDO                 ║");
-        Console.WriteLine("╚═══════════════════════════════════════════════════════╝");
-        Console.ResetColor();
         Console.WriteLine($"  Gerações executadas   : {_generation}");
         Console.WriteLine($"  Tamanho da população  : {_populationSize}");
         Console.WriteLine($"  Melhor fitness final  : {BestFitnessEver:F2}");
