@@ -2,7 +2,7 @@
 
 // ── Parâmetros configuráveis ─────────────────────────────────────────────────
 int  populationSize   = 1000;  // indivíduos por geração
-int  generations      = 50;    // número de gerações
+int  generations      = 10;    // número de gerações
 int  stepsPerEval     = 500;   // ticks de simulação por indivíduo (Fase 2)
 int  eliteCount       = 10;    // quantos sobrevivem sem mutação (Fase 3)
 double mutationRate   = 0.10;  // 10% de chance de mutar cada peso (Fase 3)
