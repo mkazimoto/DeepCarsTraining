@@ -354,7 +354,7 @@ public sealed class Trainer
         if (BestNetwork is null) return null;
 
         Directory.CreateDirectory(NetworkFolder);
-        string fileName = $"best_network_gen{BestNetwork.Generation}_fit{BestFitnessEver:F0}.json";
+        string fileName = $"best_network_gen{_generation}_fit{BestFitnessEver:F0}.json";
         string fullPath = Path.Combine(NetworkFolder, fileName);
 
         BestNetwork.SaveToJson(fullPath);
