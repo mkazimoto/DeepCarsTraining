@@ -12,6 +12,9 @@
     <None Update="RedeNeural\best_network_gen10_fit5980.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="RedeNeural\best_network_gen40_fit4408.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
