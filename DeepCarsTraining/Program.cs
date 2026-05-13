@@ -22,6 +22,7 @@ TrackVisualizer? visualizer = showVisualization
 bool restartTraining;
 do
 {
+    visualizer?.ResetTrainingState();
     var trainer = new Trainer(
         populationSize   : populationSize,
         stepsPerEval     : stepsPerEval,

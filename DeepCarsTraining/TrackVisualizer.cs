@@ -153,6 +153,15 @@ public sealed class TrackVisualizer : Form
   }
 
   /// <summary>
+  /// Remove a mensagem "Treinamento concluído" do HUD (chamado ao reiniciar).
+  /// </summary>
+  public void ResetTrainingState()
+  {
+    if (IsDisposed) return;
+    lock (_stateLock) { _trainingDone = false; }
+  }
+
+  /// <summary>
   /// Exibe "Treinamento concluído" no HUD.
   /// </summary>
   public void SignalTrainingComplete()
@@ -211,10 +220,10 @@ public sealed class TrackVisualizer : Form
         var match = _cmbNetworks.Items.Cast<NetworkItem>()
                                 .FirstOrDefault(n => n.Path == prev.Path);
         if (match != null) _cmbNetworks.SelectedItem = match;
-        else if (_cmbNetworks.Items.Count > 1) _cmbNetworks.SelectedIndex = 1;
+        else _cmbNetworks.SelectedIndex = 0;
       }
-      else if (_cmbNetworks.Items.Count > 1)
-        _cmbNetworks.SelectedIndex = 1;  // primeiro arquivo real
+      else
+        _cmbNetworks.SelectedIndex = 0;  // <Iniciar Treinamento>
 
       _cmbNetworks.SelectedIndexChanged += OnCmbNetworkSelected;
     }
@@ -453,7 +462,7 @@ public sealed class TrackVisualizer : Form
     public string Path { get; } = path;
     public override string ToString() =>
       string.IsNullOrEmpty(Path)
-        ? "< Iniciar Treinamento >"
+        ? "<Iniciar Treinamento>"
         : System.IO.Path.GetFileNameWithoutExtension(Path);
   }
 
