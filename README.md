@@ -10,6 +10,9 @@ Simulador de treinamento evolutivo de carros autônomos usando redes neurais art
 
 <img width="842" height="744" alt="DeepCarsTraining_y74G7ZUSOA" src="https://github.com/user-attachments/assets/759b06f7-ef08-4fd4-a37e-8cabf27ea19e" />
 
+Observação: Executar o treinamento em uma pista difícil com curvas acentuadas, deixa os indivíduos preparados para qualquer outra pista, o contrário não é verdadeiro:
+  Provérbio popular: "Águas tranquilas não fazem bons marinheiros..."
+
 ## Visão Geral
 
 O projeto treina uma população de carros simulados para navegar em uma pista em formato de estádio com chicanes. Cada carro é controlado por uma rede neural (MLP), e a população evolui ao longo de gerações usando um algoritmo genético simples.
