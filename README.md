@@ -7,7 +7,7 @@ Simulador de treinamento evolutivo de carros autônomos usando redes neurais art
   * pode fazer o indivíduo correr devagar demais, deixando-o para trás.
   * pode fazer o indivíduo correr rápido demais, fazendo-o sofrer um acidente.
   * ou pode ser uma vantagem evolutiva, fazendo o indivíduo acelerar nas curvas, destacando-o dos demais.
-  * 
+    
 <img width="842" height="744" alt="DeepCarsTraining_oEc0dbRFcZ" src="https://github.com/user-attachments/assets/51f8ff87-1d1f-4263-a27d-42583ccc5643" />
 
 Observação: 
