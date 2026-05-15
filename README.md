@@ -10,8 +10,9 @@ Simulador de treinamento evolutivo de carros autônomos usando redes neurais art
 
 <img width="842" height="744" alt="DeepCarsTraining_y74G7ZUSOA" src="https://github.com/user-attachments/assets/759b06f7-ef08-4fd4-a37e-8cabf27ea19e" />
 
-Observação: Executar o treinamento em uma pista difícil com curvas acentuadas, deixa os indivíduos preparados para qualquer outra pista, o contrário não é verdadeiro:
-  Provérbio popular: "Águas tranquilas não fazem bons marinheiros..."
+Observação: 
+  * Executar o treinamento em uma pista difícil com curvas acentuadas, deixa os indivíduos preparados para qualquer outra pista (o contrário não é verdadeiro).
+  * Provérbio popular: "Águas tranquilas não fazem bons marinheiros..."
 
 ## Visão Geral
 
