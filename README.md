@@ -2,7 +2,7 @@
 
 Simulador de treinamento evolutivo de carros autônomos usando redes neurais artificiais — inspirado no projeto [DeepCars](https://github.com/JVictorDias/DeepCars/).
 
-<img width="1314" height="827" alt="DeepCarsTrainning" src="https://github.com/user-attachments/assets/cfb32dc4-c011-40f3-8c50-547c7babb43d" />
+<img width="842" height="744" alt="DeepCarsTraining_y74G7ZUSOA" src="https://github.com/user-attachments/assets/759b06f7-ef08-4fd4-a37e-8cabf27ea19e" />
 
 ## Visão Geral
 
