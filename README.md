@@ -2,11 +2,11 @@
 
 Simulador de treinamento evolutivo de carros autônomos usando redes neurais artificiais — inspirado no projeto [DeepCars](https://github.com/JVictorDias/DeepCars/).
 
-* no fim de cada geração os 10 melhores são selecionados e seus descendentes sofrerão mutação genética
-* a mutação pode boa o ruim
-  * pode fazer o indivíduo correr devagar e ficar para trás
-  * pode fazer o indivíduo correr rápido demais e sofrer um acidente
-  * ou pode ser uma vantagem competitiva fazendo o indivíduo acelerar nas curvas
+* a cada geração, os 10 melhores de 1000 indivíduos serão selecionados e seus descendentes sofrerão mutação genética na próxima geração
+* a mutação pode boa o ruim:
+  * pode fazer o indivíduo correr devagar demais e deixando-o para trás
+  * pode fazer o indivíduo correr rápido demais e fazendo sofrer um acidente
+  * ou pode ser uma vantagem evolutiva fazendo o indivíduo acelerar nas curvas e se destacando dos demais
 
 <img width="842" height="744" alt="DeepCarsTraining_y74G7ZUSOA" src="https://github.com/user-attachments/assets/759b06f7-ef08-4fd4-a37e-8cabf27ea19e" />
 
