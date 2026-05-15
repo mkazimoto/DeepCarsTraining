@@ -4,9 +4,9 @@ Simulador de treinamento evolutivo de carros autônomos usando redes neurais art
 
 * a cada geração de 1000 indivíduos, os 10 melhores serão selecionados e seus descendentes sofrerão mutação genética para a próxima geração.
 * a mutação pode boa ou ruim:
-  * pode fazer o indivíduo correr devagar demais e deixando-o para trás.
-  * pode fazer o indivíduo correr rápido demais e fazendo-o sofrer um acidente.
-  * ou pode ser uma vantagem evolutiva fazendo o indivíduo acelerar nas curvas e se destacando dos demais.
+  * pode fazer o indivíduo correr devagar demais, deixando-o para trás.
+  * pode fazer o indivíduo correr rápido demais, fazendo-o sofrer um acidente.
+  * ou pode ser uma vantagem evolutiva, fazendo o indivíduo acelerar nas curvas, destacando-o dos demais.
 
 <img width="842" height="744" alt="DeepCarsTraining_y74G7ZUSOA" src="https://github.com/user-attachments/assets/759b06f7-ef08-4fd4-a37e-8cabf27ea19e" />
 
