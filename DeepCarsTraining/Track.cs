@@ -24,7 +24,7 @@ public static class Track
 
     private const int SemiPts = 48;        // amostras por semicírculo (mais = mais suave)
     private const int ChicanePts = 24;     // pontos amostrados em cada chicane
-    private static double _chicaneA = 0.0; // amplitude lateral da chicane (px)
+    private static double _chicaneA = 40.0; // amplitude lateral da chicane (px)
 
     /// <summary>Amplitude atual das chicanes (px).</summary>
     public static double ChicaneAmplitude => _chicaneA;

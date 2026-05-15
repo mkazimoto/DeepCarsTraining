@@ -49,7 +49,7 @@ public sealed class TrackVisualizer : Form
   // ── Botão de curvas ─────────────────────────────────────────────
   private static readonly double[] CurvePresets = [0.0, 20.0, 40.0, 60.0, 80.0];
   private static readonly string[] CurveLabels  = ["Reta", "Leve", "Média", "Forte", "Extrema"];
-  private int _curveIndex = 0; // padrão: 0 px 
+  private int _curveIndex = 2; // padrão: 0 px 
   private Button? _btnCurves;
   // ── ComboBox de seleção de rede neural ────────────────────────────────
   private ComboBox? _cmbNetworks;
